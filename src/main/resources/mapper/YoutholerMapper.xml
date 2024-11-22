@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.youthol.trainingmanagementsystem.mapper.YoutholerMapper">
+
+    <!-- 查询所有数据 -->
+    <select id="findAll" resultType="cn.youthol.trainingmanagementsystem.entity.Youtholer">
+        SELECT * FROM youtholer
+    </select>
+
+    <!-- 根据 sdut_id 查询 -->
+    <select id="findById" parameterType="string" resultType="cn.youthol.trainingmanagementsystem.entity.Youtholer">
+        SELECT * FROM youtholer WHERE sdut_id = #{sdut_id};
+    </select>
+
+    <!-- 根据 name 查询 -->
+    <select id="findByName" parameterType="string" resultType="cn.youthol.trainingmanagementsystem.entity.Youtholer">
+        SELECT * FROM youtholer WHERE name = #{name};
+    </select>
+
+    <!-- 根据 department 查询 -->
+    <select id="findByDepartment" parameterType="string" resultType="cn.youthol.trainingmanagementsystem.entity.Youtholer">
+        SELECT * FROM youtholer WHERE department = #{department};
+    </select>
+
+    <!-- 插入数据 -->
+    <insert id="insert" parameterType="cn.youthol.trainingmanagementsystem.entity.Youtholer">
+        INSERT INTO youtholer (id, sdut_id, name, department, identity, content)
+        VALUES (#{id}, #{sdut_id}, #{name}, #{department}, #{identity}, #{content});
+    </insert>
+
+    <!-- 更新数据 -->
+    <update id="update" parameterType="cn.youthol.trainingmanagementsystem.entity.Youtholer">
+        UPDATE youtholer
+        SET name = #{name}, department = #{department}, identity = #{identity}, content = #{content}
+        WHERE sdut_id = #{sdut_id};
+    </update>
+
+    <!-- 删除数据 -->
+    <delete id="deleteById" parameterType="string">
+        DELETE FROM youtholer WHERE sdut_id = #{sdut_id};
+    </delete>
+
+</mapper>

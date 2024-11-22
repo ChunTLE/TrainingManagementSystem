@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/dbook?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+    url: jdbc:mysql://localhost:3306/youthol?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
     username: root
     password: 1234
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -39,3 +39,16 @@ spring:
       wall:
         config:
           multi-statement-allow: true
+  security:
+    user:
+      name: admin
+      password: 123456
+  data:
+    redis:
+      host: localhost
+      port: 6379
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+

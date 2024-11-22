@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.youthol.trainingmanagementsystem.mapper.SduterMapper">
+
+    <select id="findAll" resultType="cn.youthol.trainingmanagementsystem.entity.Sduter">
+        SELECT * FROM sduter
+    </select>
+
+    <select id="findById" resultType="cn.youthol.trainingmanagementsystem.entity.Sduter">
+        SELECT * FROM sduter where sdut_id = #{sdut_id}
+    </select>
+
+    <insert id="insert" parameterType="cn.youthol.trainingmanagementsystem.entity.Sduter">
+        INSERT INTO sduter (sdut_id, name, password)
+        VALUES (#{sdut_id}, #{name}, #{password});
+    </insert>
+
+    <update id="update" parameterType="cn.youthol.trainingmanagementsystem.entity.Sduter">
+        UPDATE sduter
+        SET name = #{name}, password = #{password}
+        WHERE sdut_id = #{sdut_id}
+    </update>
+
+    <update id="updatePwd" parameterType="cn.youthol.trainingmanagementsystem.entity.Sduter">
+        UPDATE sduter
+        SET password = #{password}
+        WHERE sdut_id = #{sdut_id}
+    </update>
+
+</mapper>

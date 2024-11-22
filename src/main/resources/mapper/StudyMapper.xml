@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.youthol.trainingmanagementsystem.mapper.StudyMapper">
+
+    <!-- 查询所有字段 -->
+    <select id="findAll" resultType="cn.youthol.trainingmanagementsystem.entity.Study">
+        SELECT id, date, department, plan, identity
+        FROM study
+    </select>
+
+
+    <!-- 根据 ID 查询 -->
+    <select id="findById" parameterType="Long" resultType="cn.youthol.trainingmanagementsystem.entity.Study">
+        SELECT id, date, department, plan, identity
+        FROM study
+        WHERE id = #{id}
+    </select>
+
+    <!-- 插入记录 -->
+    <insert id="insertStudy" parameterType="cn.youthol.trainingmanagementsystem.entity.Study">
+        INSERT INTO study (date, department, plan, identity)
+        VALUES (#{date}, #{department}, #{plan}, #{identity})
+    </insert>
+
+    <!-- 更新记录 -->
+    <update id="updateStudy" parameterType="cn.youthol.trainingmanagementsystem.entity.Study">
+        UPDATE study
+        SET date = #{date}, department = #{department}, plan = #{plan}, identity = #{identity}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="deleteById" parameterType="int">
+        DELETE FROM study
+        WHERE id = #{id}
+    </delete>
+
+</mapper>
