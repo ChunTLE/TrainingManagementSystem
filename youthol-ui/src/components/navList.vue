@@ -1,17 +1,18 @@
 <script setup>
 import { RouterLink } from 'vue-router'
 import { useUserStore } from '@/store/store'
+
 const emit = defineEmits(['displayHeaderNav'])
 let userStore = useUserStore()
 function Logout() {
-    localStorage.removeItem('YoutholAccessToken')
-    userStore.$patch({ sdut_id: '', is_login: false })
-    window.location.href = '/'
+    userStore.$patch({ sdut_id: '', is_login: false, token: '' })
+    location.href = '/login'
 }
 
 function close() {
     emit('displayHeaderNav', false)
 }
+
 </script>
 <template>
     <el-scrollbar>
@@ -20,7 +21,7 @@ function close() {
             <div class="home nav-item">首页</div>
         </router-link>
 
-        <router-link to="/student">
+        <router-link v-if="userStore.identity === 1" to="/student">
             <div class="student nav-item" @click="close">成员</div>
         </router-link>
 
@@ -28,7 +29,11 @@ function close() {
             <div class="study nav-item" @click="close">培训</div>
         </router-link>
 
-        <!-- <div class="logout nav-item" @click="Logout">退出登录</div> -->
+        <router-link to="/changePwd">
+            <div class="changePwd nav-item" @click="close">修改密码</div>
+        </router-link>
+
+        <div class="logout nav-item" @click="Logout">退出登录</div>
     </el-scrollbar>
 </template>
 
@@ -77,5 +82,9 @@ function close() {
         box-shadow: inset 0 0 20px #57b1ff6f;
         transform: scale(1.05, 1.05);
     }
+}
+
+.logout:hover {
+    cursor: pointer;
 }
 </style>

@@ -1,8 +1,10 @@
 package cn.youthol.trainingmanagementsystem.controller;
 
 import cn.youthol.trainingmanagementsystem.entity.Result;
+import cn.youthol.trainingmanagementsystem.entity.Sduter;
 import cn.youthol.trainingmanagementsystem.entity.Youtholer;
 import cn.youthol.trainingmanagementsystem.service.YoutholerService;
+import cn.youthol.trainingmanagementsystem.utils.ThreadLocalUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,5 +56,13 @@ public class YoutholerController {
     public Result deleteYoutholer(@RequestBody List<String> sdutIds) {
         sdutIds.forEach(sdutId -> youtholerService.deleteYoutholer(sdutId));
         return Result.success();
+    }
+
+    @GetMapping("/youtholerInfo")
+    public Result<Youtholer> youtholerInfo() {
+        Map<String, Object> map = ThreadLocalUtil.get();
+        String sdut_id = (String) map.get("sdut_id");
+        Youtholer youtholer = youtholerService.getYoutholerById(sdut_id);
+        return Result.success(youtholer);
     }
 }

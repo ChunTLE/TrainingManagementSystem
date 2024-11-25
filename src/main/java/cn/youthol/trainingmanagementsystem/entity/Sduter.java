@@ -11,5 +11,6 @@ public class Sduter {
     private String sdut_id;
     private String password;
     private String name;
+    private Integer identity;
     private boolean firstLogin;
 }

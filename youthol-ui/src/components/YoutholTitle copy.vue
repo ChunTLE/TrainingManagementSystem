@@ -52,7 +52,7 @@ onMounted(() => {
               {
                 percent: 1,
                 style: {
-                  fill: 'rgb(0,138,255)'
+                  fill: '#fff'
                 }
               }
             ]

@@ -82,9 +82,9 @@ public class SduterController {
 
     @PatchMapping("/updatePwd")
     public Result updatePwd(@RequestBody Map<String, String> params, @RequestHeader("Authorization") String token) {
-        String oldPwd = params.get("oldPwd");
-        String newPwd = params.get("newPwd");
-        String rePwd = params.get("rePwd");
+        String oldPwd = params.get("old_pwd");
+        String newPwd = params.get("new_owd");
+        String rePwd = params.get("re_pwd");
 
         if (!StringUtils.hasLength(oldPwd) || !StringUtils.hasLength(newPwd) || !StringUtils.hasLength(rePwd)) {
             return Result.error("密码为空");

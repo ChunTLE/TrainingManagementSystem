@@ -1,11 +1,19 @@
 <script setup>
-
+import YoutholTitle from '@/components/YoutholTitle.vue';
 </script>
 
 <template>
-  <h1>你好</h1>
+  <div class="main_layout">
+    <YoutholTitle />
+  </div>
+
 </template>
 
 <style scoped>
-
+.main_layout {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
 </style>

@@ -45,10 +45,30 @@ const router = createRouter({
           components: {
             MainComponment: () => import('../views/study.vue')
           }
+        },
+        {
+          path: 'changePwd',
+          name: 'changePwd',
+          components: {
+            MainComponment: () => import('../views/changePwd.vue')
+          }
         }
       ]
     }
   ]
+})
+
+router.beforeEach((to, from, next) => {
+  const userStore = useUserStore()
+  if (to.path === '/login' || to.path === '/register') {
+    next()
+  } else {
+    if (userStore.token) {
+      next()
+    } else {
+      next('/login')
+    }
+  }
 })
 
 export default router

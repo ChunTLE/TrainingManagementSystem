@@ -31,11 +31,11 @@ const selectedInsert = reactive({
     content: ''
 })
 
-const onInsert = () => {
+function onInsert() {
     dialogInsert.value = true
 }
 
-const eddInsert = () => {
+function eddInsert() {
     http.post('/youtholer/create', selectedInsert).then(() => {
         dialogInsert.value = false
         getAllData()
@@ -49,7 +49,7 @@ const eddInsert = () => {
     })
 }
 
-const onEdit = () => {
+function onEdit() {
     if (multipleSelection.value.length === 1) {
         const item = multipleSelection.value[0]
         selectedEdit.sdut_id = item.sdut_id
@@ -63,7 +63,7 @@ const onEdit = () => {
     }
 }
 
-const onUpdate = () => {
+function onUpdate() {
     http.put('/youtholer/update', selectedEdit).then(() => {
         dialogEdit.value = false
         getAllData()
@@ -72,20 +72,20 @@ const onUpdate = () => {
     })
 }
 
-const onSubmit = () => {
+function onSubmit() {
     // 选择部门后又删除会导致 department 为 null
     if (formInline.name == null)
         formInline.name = ''
     if (formInline.department == null)
         formInline.department = ''
     http.post('/youtholer/search', formInline).then(res => {
-        tableData.value = res.data.data
+        tableData.value = res.data
     }).catch(err => {
         console.error(err)
     })
 }
 
-const onDelete = () => {
+function onDelete() {
     if (multipleSelection.value.length === 0) {
         ElMessage.warning('请先选择要删除的记录')
         return
@@ -113,7 +113,7 @@ const onDelete = () => {
     })
 }
 
-const handleSelectionChange = (val) => {
+function handleSelectionChange(val) {
     multipleSelection.value = val
 }
 
@@ -122,12 +122,11 @@ onMounted(() => {
     loading.value = false
 })
 
-const getAllData = () => {
+function getAllData() {
     http.get('/youtholer/all').then(res => {
-        tableData.value = res.data.data
+        tableData.value = res.data
     })
 }
-
 </script>
 
 <template>

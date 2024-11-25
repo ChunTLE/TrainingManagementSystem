@@ -13,16 +13,14 @@ const registerForm = ref({
     confirmPassword: ''
 });
 
-// 定义验证函数
-const validateConfirmPassword = (rule, value, callback) => {
+function validateConfirmPassword() {
     if (value !== registerForm.value.password) {
         callback(new Error('两次输入的密码不一致'));
     } else {
         callback();
     }
-};
+}
 
-// 定义表单验证规则
 const rules = reactive({
     name: [
         { required: true, message: '请输入姓名', trigger: 'blur' },
@@ -39,26 +37,22 @@ const rules = reactive({
     ]
 });
 
-const handleRegister = () => {
+function handleRegister() {
     console.log(registerForm.value);
 
-
     http.post('/auth/register', registerForm.value).then(res => {
-        if (res.data.code === 0) {
-            ElMessage.success('注册成功');
-            router.push('/login');
-        }
+        ElMessage.success('注册成功');
+        router.push('/login');
     }).catch(err => {
         console.log(err);
         ElMessage.error('注册失败，请检查输入信息');
         return false;
     })
+}
 
-};
-
-const navigateToRegister = () => {
+function navigateToRegister() {
     router.push('/login');
-};
+}
 </script>
 
 <template>
@@ -69,7 +63,7 @@ const navigateToRegister = () => {
                     <span>用户注册</span>
                 </div>
             </template>
-            <el-form :model="registerForm" ref="form" label-width="80px" :rules="rules">
+            <el-form :model="registerForm" label-width="80px" :rules="rules">
                 <el-form-item label="姓名" prop="name">
                     <el-input v-model="registerForm.name" placeholder="请输入姓名"></el-input>
                 </el-form-item>

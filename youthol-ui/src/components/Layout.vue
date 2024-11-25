@@ -1,36 +1,50 @@
 <script setup>
+import { onMounted, onUnmounted, ref } from 'vue'
 import http from '@/util/http';
-import navList from '@/components/navList.vue'
-import { onMounted, ref } from 'vue'
-import { less768 } from '@/assets/js/screen.js'
-import { useUserStore } from '@/store/store.js'
+import { useUserStore } from '@/store/store.js';
+import navList from '@/components/navList.vue';
 
-const userStore = useUserStore()
+const userStore = useUserStore();
+let drawer = ref(false);
+let _size = ref('0%');
 
-let drawer = ref(false)
-function displayHeaderNav(res) {
-    drawer.value = res
+function updateDrawerState() {
+    const isSmallScreen = window.innerWidth < 768;
+    drawer.value = isSmallScreen;
+    _size.value = isSmallScreen ? '60%' : '0%';
 }
 
-let _size = ref('0%')
+// 初始化用户数据
 onMounted(() => {
-    if (less768()) {
-        _size.value = '90%'
-    }
-    http.get('/auth/userInfo').then(res => {
-        console.log(res);
-        userStore.$patch({
-            /* 
-            sdut_id: res.data.sdut_id,
-            name: res.data.name,
-            department: res.data.department,
-            is_login: true
-            */
+    updateDrawerState();
+
+    window.addEventListener('resize', updateDrawerState);
+
+    http.get('/auth/userInfo')
+        .then(res => {
+            userStore.$patch({
+                sdut_id: res.data.sdut_id,
+                name: res.data.name,
+                identity: res.data.identity,
+                is_login: true
+            });
+            return http.get('/youtholer/youtholerInfo');
         })
-    }).catch(err => {
-        console.log(err)
-    })
-})
+        .then(res => {
+            userStore.$patch({ department: res.data.department });
+        })
+        .catch(err => {
+            console.error(err);
+        });
+});
+
+onUnmounted(() => {
+    window.removeEventListener('resize', updateDrawerState);
+});
+
+function displayHeaderNav(res) {
+    drawer.value = res;
+}
 </script>
 
 <template>
@@ -38,7 +52,6 @@ onMounted(() => {
         <el-container>
             <el-header class="header-nav">
                 <div class="top-nav">
-                    <img src="../assets/img/youthol.png" alt="" class="youthol-logo" @click="displayHeaderNav(true)" />
                     <div class="top-nav-btn" @click="displayHeaderNav(true)">菜单</div>
                 </div>
             </el-header>
@@ -46,28 +59,27 @@ onMounted(() => {
             <el-container>
                 <el-aside class="aside-nav">
                     <div class="user-info">
-
                         <div class="user-info-detail">
-
                             <div class="user-name">{{ userStore.name }}</div>
                             <div class="department">{{ userStore.department }}</div>
                         </div>
                     </div>
-                    <navList> </navList>
+                    <navList />
                 </el-aside>
+
                 <el-main>
                     <el-scrollbar>
                         <router-view name="MainComponment"></router-view>
                     </el-scrollbar>
                 </el-main>
             </el-container>
-
         </el-container>
-        <el-drawer :size="_size" v-model="drawer" :with-header="false" direction="ttb" :before-close="handleClose">
+
+        <el-drawer :size="_size" v-model="drawer" :with-header="false" direction="ttb">
             <template #default>
                 <div class="header-nav-drawer">
                     <div class="nav-item" @click="displayHeaderNav(false)">关闭菜单</div>
-                    <navList @display-header-nav="displayHeaderNav"> </navList>
+                    <navList @display-header-nav="displayHeaderNav" />
                 </div>
             </template>
         </el-drawer>

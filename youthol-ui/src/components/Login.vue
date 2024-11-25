@@ -15,14 +15,13 @@ const loginForm = reactive({
     password: ''
 })
 
-const handleLogin = () => {
+function handleLogin() {
     loginFormRef.value.validate((valid) => {
         if (valid) {
             http.post('/auth/login', loginForm).then(res => {
                 ElMessage.success('登录成功')
-                // console.log(res)
                 userStore.$patch({
-                    token: res.data.data
+                    token: res.data
                 })
                 router.push('/')
             }).catch(err => {
@@ -35,8 +34,12 @@ const handleLogin = () => {
     })
 }
 
-const navigateToRegister = () => {
+function navigateToRegister() {
     router.push('/register')
+}
+
+function navigateToUpdate() {
+    router.push('/updatePwd')
 }
 </script>
 

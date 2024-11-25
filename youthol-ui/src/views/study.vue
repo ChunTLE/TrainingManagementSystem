@@ -1,8 +1,10 @@
 <script setup>
 import { ref, reactive, computed, watch, nextTick, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { useUserStore } from '@/store/store'
 import http from '@/util/http'
 
+const userStore = useUserStore();
 const calendarData = reactive([])
 const selectedDepartment = ref('')
 const rowHeights = reactive([])
@@ -24,13 +26,21 @@ const viewFormData = reactive({
     id: ''
 });
 
+const noteDialogVisible = ref(false)
+const noteContent = reactive({
+    date: '',
+    department: '',
+    plan: ''
+});
+
 const filteredCalendarData = computed(() =>
     selectedDepartment.value
         ? calendarData.filter((item) => item.department === selectedDepartment.value)
         : calendarData
 )
 
-const onDateClick = (data) => {
+function onDateClick(data) {
+    if (userStore.identity !== 1) return; // 只有 identity === 1 才能新增
     const clickedDate = new Date(data.date).toISOString().split('T')[0]
     formData.date = clickedDate
     formData.department = ''
@@ -39,20 +49,28 @@ const onDateClick = (data) => {
     dialogVisible.value = true
 }
 
-const onBadgeClick = (data, department) => {
+function onBadgeClick(data, department) {
     const clickedDate = new Date(data.date).toISOString().split('T')[0];
     const existingPlan = filteredCalendarData.value.find(item => item.date === clickedDate && item.department === department);
 
     if (existingPlan) {
-        viewDialogVisible.value = true;
-        viewFormData.id = existingPlan.id;
-        viewFormData.date = existingPlan.date;
-        viewFormData.department = existingPlan.department;
-        viewFormData.plan = existingPlan.plan;
+        if (userStore.identity === 1) {
+            viewDialogVisible.value = true;
+            viewFormData.id = existingPlan.id;
+            viewFormData.date = existingPlan.date;
+            viewFormData.department = existingPlan.department;
+            viewFormData.plan = existingPlan.plan;
+        }
+        else {
+            noteDialogVisible.value = true;
+            noteContent.date = existingPlan.date;
+            noteContent.department = existingPlan.department;
+            noteContent.plan = existingPlan.plan;
+        }
     }
 }
 
-const submitPlan = async () => {
+async function submitPlan() {
     const newPlan = {
         date: formData.date,
         department: formData.department,
@@ -71,7 +89,7 @@ const submitPlan = async () => {
     }
 }
 
-const updatePlan = async () => {
+async function updatePlan() {
     const updatedPlan = {
         date: viewFormData.date,
         department: viewFormData.department,
@@ -79,7 +97,6 @@ const updatePlan = async () => {
         id: viewFormData.id
     };
     await http.put('/study/update', updatedPlan).then(() => {
-        console.log(updatedPlan)
         ElMessage.success('计划更新成功')
         viewDialogVisible.value = false
         getAllData()
@@ -88,7 +105,7 @@ const updatePlan = async () => {
     });
 }
 
-const deletePlan = async () => {
+async function deletePlan() {
     await ElMessageBox.confirm(
         '确定要删除此计划吗？',
         '提示',
@@ -111,7 +128,7 @@ const deletePlan = async () => {
     });
 }
 
-const getDepartmentsForDate = (date) => {
+function getDepartmentsForDate(date) {
     const formattedDate = new Date(date).toISOString().split('T')[0]
     const departments = filteredCalendarData.value
         .filter((item) => item.date === formattedDate)
@@ -119,7 +136,7 @@ const getDepartmentsForDate = (date) => {
     return [...new Set(departments)]
 }
 
-const adjustRowHeights = () => {
+function adjustRowHeights() {
     nextTick(() => {
         const rows = document.querySelectorAll('.el-calendar-table__row')
         rowHeights.length = 0
@@ -146,10 +163,10 @@ onMounted(() => {
     getAllData()
 })
 
-const getAllData = () => {
+function getAllData() {
     http.get('/study/all').then((res) => {
         calendarData.length = 0
-        res.data.data.forEach((item) => {
+        res.data.forEach((item) => {
             calendarData.push(item)
         })
         loading.value = false
@@ -216,7 +233,7 @@ const getAllData = () => {
                     <el-input v-model="viewFormData.id" disabled />
                 </el-form-item>
                 <el-form-item label="日期">
-                    <el-input v-model="viewFormData.date" disabled />
+                    <el-input v-model="viewFormData.date" />
                 </el-form-item>
                 <el-form-item label="部门">
                     <el-select v-model="viewFormData.department">
@@ -238,6 +255,23 @@ const getAllData = () => {
                 <el-button @click="viewDialogVisible = false">取消</el-button>
                 <el-button type="danger" @click="deletePlan">删除</el-button>
                 <el-button type="primary" @click="updatePlan">确认</el-button>
+            </template>
+        </el-dialog>
+
+        <el-dialog v-model="noteDialogVisible" title="计划详情" :close-on-click-modal="false">
+            <el-form label-position="left" label-width="80px">
+                <el-form-item label="日期">
+                    <el-text>{{ noteContent.date }}</el-text>
+                </el-form-item>
+                <el-form-item label="部门">
+                    <el-text>{{ noteContent.department }}</el-text>
+                </el-form-item>
+                <el-form-item label="计划">
+                    <el-text>{{ noteContent.plan }}</el-text>
+                </el-form-item>
+            </el-form>
+            <template #footer>
+                <el-button @click="noteDialogVisible = false">关闭</el-button>
             </template>
         </el-dialog>
     </div>

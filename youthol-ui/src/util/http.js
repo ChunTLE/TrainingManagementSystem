@@ -25,7 +25,7 @@ http.interceptors.request.use(
         Promise.reject(err);
     }
 );
-/*
+
 http.interceptors.response.use(
     result => {
         if (result.data.code === 0) {
@@ -35,8 +35,6 @@ http.interceptors.response.use(
         return Promise.reject(result.data);
     },
     err => {
-        console.log(err);
-        
         if (err.status === 401) {
             ElMessage.error('请登录');
             router.push('/login');
@@ -47,5 +45,5 @@ http.interceptors.response.use(
         return Promise.reject(err);
     }
 )
-*/
+
 export default http;
